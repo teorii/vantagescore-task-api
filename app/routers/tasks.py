@@ -1,6 +1,6 @@
 """CRUD endpoints for tasks."""
 
-from typing import Annotated
+from typing import Annotated, Any
 from uuid import UUID
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request, Response, status
@@ -21,7 +21,9 @@ router = APIRouter(
 )
 
 Repository = Annotated[TaskRepository, Depends(get_repository)]
-NOT_FOUND = {status.HTTP_404_NOT_FOUND: {"model": ErrorResponse, "description": "Task not found"}}
+NOT_FOUND: dict[int | str, dict[str, Any]] = {
+    status.HTTP_404_NOT_FOUND: {"model": ErrorResponse, "description": "Task not found"},
+}
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)

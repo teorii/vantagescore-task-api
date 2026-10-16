@@ -67,13 +67,13 @@ class TaskPage(BaseModel):
     limit: int
     offset: int
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def next_offset(self) -> int | None:
         following = self.offset + self.limit
         return following if following < self.total else None
 
-    @computed_field
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def previous_offset(self) -> int | None:
         return max(self.offset - self.limit, 0) if self.offset > 0 else None

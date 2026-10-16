@@ -7,4 +7,5 @@ def create_task(client: TestClient, title: str = "Write tests", **fields: Any) -
     """Create a task through the API and return the response body."""
     response = client.post("/tasks", json={"title": title, **fields})
     assert response.status_code == 201
-    return response.json()
+    body: dict[str, Any] = response.json()
+    return body

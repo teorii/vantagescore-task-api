@@ -1,5 +1,7 @@
 """Exception handlers that give every failure the same {"detail": "..."} body."""
 
+from collections.abc import Mapping
+
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -10,7 +12,7 @@ from app.storage import TaskNotFoundError
 _LOCATION_PREFIXES = {"body", "query", "path"}
 
 
-def _error(status_code: int, detail: str, headers: dict[str, str] | None = None) -> JSONResponse:
+def _error(status_code: int, detail: str, headers: Mapping[str, str] | None = None) -> JSONResponse:
     return JSONResponse(status_code=status_code, content={"detail": detail}, headers=headers)
 
 
