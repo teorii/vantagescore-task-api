@@ -2,10 +2,6 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 task_events.log
-# prep material, not part of the submission
-*.pdf
-PLAN.md
-ONBOARDING.md
-# local Claude Code permissions
-.claude/settings.local.json
