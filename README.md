@@ -34,6 +34,18 @@ Interactive docs: http://127.0.0.1:8000/docs
 python -m pytest -q
 ```
 
+## Lint and type check
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+```bash
+ruff check . && ruff format --check . && mypy
+```
+
+The same commands run in GitHub Actions on every push and pull request, on Python 3.11 and 3.12.
+
 ## Endpoints
 
 | Method | Path | Success | Errors |
@@ -123,3 +135,22 @@ tests/
 - `GET /tasks` returns a page envelope rather than a bare list. The repository exposes `count` and
   takes `limit` and `offset`, which map directly to SQL, and `next_offset` and `previous_offset` are
   computed fields on `TaskPage`, so the navigation arithmetic lives in one place.
+
+## Decisions
+
+- Validation errors are 422, FastAPI's convention, rather than 400. The body keeps the shared
+  `{"detail": ...}` shape with the errors flattened to one string.
+- A malformed UUID in the path is a 422 because the input is invalid, not a resource that is
+  missing. Only a well-formed id that is not in storage gives a 404.
+- PATCH applies only the fields present in the body. `title` and `completed` can be omitted but
+  not set to null, because a null would bypass the non-blank rule. `description` can be set to
+  null to clear it. An empty body is a 200 that changes nothing.
+- An offset past the end of the list is an empty page with the real `total`, not an error, so a
+  client that pages while another client deletes does not break.
+- `limit` is capped at 100 with a default of 20, so one call cannot pull the whole collection.
+- Handlers are `async def` with no awaits, so the in-memory dict is only touched from the event
+  loop and a read-modify-write in PATCH cannot interleave with another request.
+- The event log is a file next to the package, written by a background task. In production the
+  path would come from configuration, or the events would go to the logging pipeline instead.
+- Storage is in memory and per process. Several workers would each hold their own data; the
+  repository protocol is the seam where a database goes.
