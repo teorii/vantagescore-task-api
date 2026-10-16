@@ -32,7 +32,9 @@ def test_create_rejects_unknown_fields(client: TestClient) -> None:
 
 
 def test_create_rejects_malformed_json(client: TestClient) -> None:
-    response = client.post("/tasks", content=b"{not json", headers={"content-type": "application/json"})
+    response = client.post(
+        "/tasks", content=b"{not json", headers={"content-type": "application/json"}
+    )
 
     assert response.status_code == 422
     assert response.json() == {"detail": "body: JSON decode error"}
@@ -56,7 +58,9 @@ def test_patch_rejects_blank_title(client: TestClient) -> None:
 
 
 @pytest.mark.parametrize("field", ["title", "completed"])
-def test_patch_rejects_null_for_fields_that_cannot_be_cleared(client: TestClient, field: str) -> None:
+def test_patch_rejects_null_for_fields_that_cannot_be_cleared(
+    client: TestClient, field: str
+) -> None:
     created = create_task(client)
 
     response = client.patch(f"/tasks/{created['id']}", json={field: None})
@@ -86,7 +90,9 @@ def test_non_boolean_completed_filter_is_422(client: TestClient) -> None:
     response = client.get("/tasks", params={"completed": "maybe"})
 
     assert response.status_code == 422
-    assert response.json() == {"detail": "completed: Input should be a valid boolean, unable to interpret input"}
+    assert response.json() == {
+        "detail": "completed: Input should be a valid boolean, unable to interpret input"
+    }
 
 
 def test_unknown_route_returns_custom_404(client: TestClient) -> None:
@@ -126,7 +132,9 @@ def test_unhandled_error_returns_500_in_the_same_shape() -> None:
         ({"offset": -1}, "offset: Input should be greater than or equal to 0"),
     ],
 )
-def test_out_of_range_pagination_params_are_422(client: TestClient, params: dict[str, int], detail: str) -> None:
+def test_out_of_range_pagination_params_are_422(
+    client: TestClient, params: dict[str, int], detail: str
+) -> None:
     response = client.get("/tasks", params=params)
 
     assert response.status_code == 422

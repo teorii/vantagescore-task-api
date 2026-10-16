@@ -13,7 +13,10 @@ router = APIRouter(
     prefix="/tasks",
     tags=["tasks"],
     responses={
-        status.HTTP_422_UNPROCESSABLE_CONTENT: {"model": ErrorResponse, "description": "Invalid input"},
+        status.HTTP_422_UNPROCESSABLE_CONTENT: {
+            "model": ErrorResponse,
+            "description": "Invalid input",
+        },
     },
 )
 

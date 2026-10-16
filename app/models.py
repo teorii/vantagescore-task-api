@@ -1,6 +1,6 @@
 """Pydantic models for the task API."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID, uuid4
 
@@ -17,7 +17,7 @@ Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 def utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class TaskCreate(BaseModel):
